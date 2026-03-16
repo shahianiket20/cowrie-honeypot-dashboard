@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cowrie Honeypot Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+}
+
+.container {
+    width: 95%;
+    margin: auto;
+    padding: 20px;
+}
+
+.header {
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #141e30, #243b55);
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #1f3b57;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.user { background: #007bff; }
+.pass { background: #28a745; }
+.cmd  { background: #ffc107; color: black; }
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    justify-items: center;
+}
+
+.chart-box {
+    width: 100%;
+    max-width: 350px;
+}
+
+.chart-box canvas {
+    max-width: 240px;
+    max-height: 240px;
+}
+
+.histogram-card canvas {
+    height: 300px !important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+    <h1>Cowrie Honeypot Dashboard</h1>
+    <p>Unauthorized Access Detection & Attack Visualization</p>
+</div>
+
+<div class="card">
+    <h2>Attack Logs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Source IP</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Command</th>
+            </tr>
+        </thead>
+        <tbody id="logTable"></tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Attack Analytics</h2>
+
+    <div class="analytics-grid">
+        <div class="chart-box">
+            <h3>Top Usernames</h3>
+            <canvas id="usernameChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h3>Top Source IPs</h3>
+            <canvas id="ipChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h3>Top Passwords</h3>
+            <canvas id="passwordChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h3>Top Commands</h3>
+            <canvas id="commandChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="card histogram-card">
+    <h2>Attack Timeline (Hourly Histogram)</h2>
+    <canvas id="timelineChart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+// LOAD LOGS
+async function loadLogs() {
+    const res = await fetch('/logs');
+    const data = await res.json();
+
+    const table = document.getElementById("logTable");
+    table.innerHTML = "";
+
+    data.forEach(log => {
+        table.innerHTML += `
+            <tr>
+                <td>${log.timestamp}</td>
+                <td>${log.src_ip}</td>
+                <td><span class="badge user">${log.username}</span></td>
+                <td><span class="badge pass">${log.password}</span></td>
+                <td><span class="badge cmd">${log.command}</span></td>
+            </tr>
+        `;
+    });
+}
+
+// CREATE PIE CHART
+function createChart(id, endpoint, colors) {
+    fetch(endpoint)
+    .then(res => res.json())
+    .then(data => {
+        new Chart(document.getElementById(id), {
+            type: 'doughnut',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+    });
+}
+
+// TIMELINE CHART (FIXED BAR WIDTH)
+function loadTimeline() {
+    fetch('/stats/timeline')
+    .then(res => res.json())
+    .then(data => {
+        new Chart(document.getElementById("timelineChart"), {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "Attack Count",
+                    data: data.values,
+                    backgroundColor: '#36A2EB',
+                    barPercentage: 0.4,
+                    categoryPercentage: 0.5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { color: 'white' }},
+                    y: { ticks: { color: 'white' }}
+                },
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+    });
+}
+
+// LOAD CHARTS
+function loadCharts() {
+    createChart("usernameChart", "/stats/username",
+        ['#36A2EB','#FF6384','#4BC0C0','#9966FF','#FF9F40']);
+
+    createChart("ipChart", "/stats/ip",
+        ['#00c6ff','#0072ff','#8e44ad','#2ecc71','#f39c12']);
+
+    createChart("passwordChart", "/stats/password",
+        ['#28a745','#ff6384','#17a2b8','#ffc107','#6610f2']);
+
+    createChart("commandChart", "/stats/command",
+        ['#f1c40f','#e67e22','#3498db','#1abc9c','#e74c3c']);
+}
+
+// INIT
+loadLogs();
+loadCharts();
+loadTimeline();
+
+// AUTO REFRESH LOGS
+setInterval(loadLogs, 5000);
+
+</script>
+
+</body>
+</html>
