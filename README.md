@@ -25,7 +25,6 @@ The system captures login attempts, commands executed by attackers, and visualiz
 ## Dashboard Analytics
 The dashboard provides visual insights into:
 
-- Total login attempts
 - Top usernames used by attackers
 - Most common passwords
 - Top attacking IP addresses
