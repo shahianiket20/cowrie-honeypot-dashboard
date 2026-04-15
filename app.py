@@ -29,7 +29,7 @@ def index():
 # ==========================
 @app.route("/logs")
 def logs_api():
-    parse_logs()   # This will parse logs automatically
+    parse_logs()   
 
     conn = get_db_connection()
 
@@ -69,7 +69,7 @@ def top_stats(field: str, limit: int = 5):
 
     col = allowed[field]
 
-    parse_logs()   # This will keep stats updated
+    parse_logs()   
 
     conn = get_db_connection()
 
@@ -105,7 +105,7 @@ def stats(field):
 # ==========================
 @app.route("/stats/timeline")
 def timeline():
-    parse_logs()   # This will keep timeline updated
+    parse_logs()   
 
     conn = get_db_connection()
 
