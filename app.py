@@ -29,7 +29,7 @@ def index():
 # ==========================
 @app.route("/logs")
 def logs_api():
-    parse_logs()   # 🔥 Automatically parse new logs
+    parse_logs()   # This will parse logs automatically
 
     conn = get_db_connection()
 
