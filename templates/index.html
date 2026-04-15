@@ -144,7 +144,7 @@ td {
 
 <script>
 
-// LOAD LOGS
+// This will load logs
 async function loadLogs() {
     const res = await fetch('/logs');
     const data = await res.json();
@@ -165,7 +165,7 @@ async function loadLogs() {
     });
 }
 
-// CREATE PIE CHART
+// This will create pie chart
 function createChart(id, endpoint, colors) {
     fetch(endpoint)
     .then(res => res.json())
@@ -188,7 +188,7 @@ function createChart(id, endpoint, colors) {
     });
 }
 
-// TIMELINE CHART (FIXED BAR WIDTH)
+// This will create timeline chart
 function loadTimeline() {
     fetch('/stats/timeline')
     .then(res => res.json())
@@ -220,7 +220,7 @@ function loadTimeline() {
     });
 }
 
-// LOAD CHARTS
+// This will load charts
 function loadCharts() {
     createChart("usernameChart", "/stats/username",
         ['#36A2EB','#FF6384','#4BC0C0','#9966FF','#FF9F40']);
@@ -235,12 +235,12 @@ function loadCharts() {
         ['#f1c40f','#e67e22','#3498db','#1abc9c','#e74c3c']);
 }
 
-// INIT
+// Init
 loadLogs();
 loadCharts();
 loadTimeline();
 
-// AUTO REFRESH LOGS
+// This will keep auto refresh logs
 setInterval(loadLogs, 5000);
 
 </script>
