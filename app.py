@@ -69,7 +69,7 @@ def top_stats(field: str, limit: int = 5):
 
     col = allowed[field]
 
-    parse_logs()   # 🔥 Keep stats updated
+    parse_logs()   # This will keep stats updated
 
     conn = get_db_connection()
 
@@ -105,7 +105,7 @@ def stats(field):
 # ==========================
 @app.route("/stats/timeline")
 def timeline():
-    parse_logs()   # 🔥 Keep timeline updated
+    parse_logs()   # This will keep timeline updated
 
     conn = get_db_connection()
 
