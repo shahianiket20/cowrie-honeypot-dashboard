@@ -20,7 +20,7 @@ def parse_logs():
                 session = event.get("session")
 
                 # -----------------------------
-                # SUCCESSFUL LOGIN
+                # Successfull Login 
                 # -----------------------------
                 if eventid == "cowrie.login.success":
                     session_auth[session] = {
@@ -29,7 +29,7 @@ def parse_logs():
                     }
 
                 # -----------------------------
-                # FAILED LOGIN ATTEMPT
+                # Failed attempt login
                 # -----------------------------
                 elif eventid == "cowrie.login.failed":
                     cursor.execute("""
@@ -46,7 +46,7 @@ def parse_logs():
                     ))
 
                 # -----------------------------
-                # COMMAND EXECUTION
+                # Read Command Execution
                 # -----------------------------
                 elif eventid == "cowrie.command.input":
 
