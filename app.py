@@ -8,7 +8,7 @@ DB_FILE = "cowrie_logs.db"
 
 
 # ==========================
-# DATABASE CONNECTION
+# Database connection import database 
 # ==========================
 def get_db_connection():
     conn = sqlite3.connect(DB_FILE)
@@ -17,7 +17,7 @@ def get_db_connection():
 
 
 # ==========================
-# MAIN PAGE
+# Main Page of Dashboard
 # ==========================
 @app.route("/")
 def index():
@@ -25,7 +25,7 @@ def index():
 
 
 # ==========================
-# LOGS API (AUTO PARSE)
+# Logs api 
 # ==========================
 @app.route("/logs")
 def logs_api():
@@ -54,7 +54,7 @@ def logs_api():
 
 
 # ==========================
-# TOP STATS FUNCTION
+# Top stats function
 # ==========================
 def top_stats(field: str, limit: int = 5):
     allowed = {
@@ -93,7 +93,7 @@ def top_stats(field: str, limit: int = 5):
 
 
 # ==========================
-# STATS ROUTE
+# Stats route field 
 # ==========================
 @app.route("/stats/<field>")
 def stats(field):
@@ -101,7 +101,7 @@ def stats(field):
 
 
 # ==========================
-# TIMELINE (HISTOGRAM)
+# Timeline histogram code
 # ==========================
 @app.route("/stats/timeline")
 def timeline():
@@ -129,7 +129,7 @@ def timeline():
 
 
 # ==========================
-# RUN APP
+# App run code
 # ==========================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
